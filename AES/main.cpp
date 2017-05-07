@@ -1,10 +1,3 @@
-/******************************************************************************/
-//	¹¤³Ì£ºAES
-//	¹¦ÄÜ£ºAES¼Ó¡¢½âÃÜÎÄ¼ş
-//  ×÷Õß£ºepsoft|MISTP
-
-/******************************************************************************/
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -12,29 +5,29 @@
 
 #include "aes.h"
 
-#define DECRYPT_FILE "AES¼ÓÃÜÃÜÎÄ.txt"
-#define ENCRYPT_FILE "AES½âÃÜÃ÷ÎÄ.txt"
-//! Ô¼ÊøÎÄ¼ş×î´ó2M
+#define DECRYPT_FILE "AESåŠ å¯†å¯†æ–‡.txt"
+#define ENCRYPT_FILE "AESè§£å¯†æ˜æ–‡.txt"
+//! çº¦æŸæ–‡ä»¶æœ€å¤§2M
 #define MAX_FILE	1024*1024*2
 
 /******************************************************************************/
-//	Ãû³Æ£ºusage
-//	¹¦ÄÜ£º°ïÖúĞÅÏ¢
-//  ²ÎÊı£ºÓ¦ÓÃ³ÌĞòÃû³Æ
-//	·µ»Ø£ºÌáÊ¾ĞÅÏ¢
+//	åç§°ï¼šusage
+//	åŠŸèƒ½ï¼šå¸®åŠ©ä¿¡æ¯
+//  å‚æ•°ï¼šåº”ç”¨ç¨‹åºåç§°
+//	è¿”å›ï¼šæç¤ºä¿¡æ¯
 
 /******************************************************************************/
 void Usage( const char *appname )
 {
-	printf( "\n\tusage: aes -e Ã÷ÎÄÎÄ¼ş 128Î»ÃÜÔ¿\n" );
-	printf( "\tusage: aes -d ÃÜÎÄÎÄ¼ş 128Î»ÃÜÔ¿\n" );
+	printf( "\n\tusage: aes -e æ˜æ–‡æ–‡ä»¶ 128ä½å¯†é’¥\n" );
+	printf( "\tusage: aes -d å¯†æ–‡æ–‡ä»¶ 128ä½å¯†é’¥\n" );
 }
 
 /******************************************************************************/
-//	Ãû³Æ£ºFileOut
-//	¹¦ÄÜ£º¼Ó/½âÃÜ½á¹ûÊä³öµ½µ±Ç°Ä¿Â¼´ÅÅÌÎÄ¼şÖĞ
-//  ²ÎÊı£ºstrOutÖ¸ÏòÊä³ö×Ö·û»º³åÇø£¬Êä³ö´óĞ¡len£¬strFileÎªÊä³öÎÄ¼ş
-//	·µ»Ø£º¸üĞÂ³É¹¦·µ»ØÊµ¼ÊÊä³ö³¤¶È£¬·ñÔò·µ»Ø0
+//	åç§°ï¼šFileOut
+//	åŠŸèƒ½ï¼šåŠ /è§£å¯†ç»“æœè¾“å‡ºåˆ°å½“å‰ç›®å½•ç£ç›˜æ–‡ä»¶ä¸­
+//  å‚æ•°ï¼šstrOutæŒ‡å‘è¾“å‡ºå­—ç¬¦ç¼“å†²åŒºï¼Œè¾“å‡ºå¤§å°lenï¼ŒstrFileä¸ºè¾“å‡ºæ–‡ä»¶
+//	è¿”å›ï¼šæ›´æ–°æˆåŠŸè¿”å›å®é™…è¾“å‡ºé•¿åº¦ï¼Œå¦åˆ™è¿”å›0
 
 /******************************************************************************/
 int FileOut( const void *strOut, int len, const char *strFile )
@@ -45,8 +38,8 @@ int FileOut( const void *strOut, int len, const char *strFile )
 	if( strOut == NULL || len ==0 )
 		goto out;
 
-	//! ´ò¿ªÎÄ¼ş¾ä±ú
-	if( (fp = fopen( strFile,"wb" )) == NULL ) // ¶ş½øÖÆĞ´
+	//! æ‰“å¼€æ–‡ä»¶å¥æŸ„
+	if( (fp = fopen( strFile,"wb" )) == NULL ) // äºŒè¿›åˆ¶å†™
 		goto out;
 
 	iWrite = fwrite( strOut, 1, len, fp );
@@ -57,11 +50,11 @@ out:
 }
 
 /******************************************************************************/
-//	Ãû³Æ£ºCheckParse
-//	¹¦ÄÜ£ºĞ£ÑéÓ¦ÓÃ³ÌĞòÈë¿Ú²ÎÊı
-//  ²ÎÊı£ºargcµÈÓÚmainÖ÷º¯Êıargc²ÎÊı£¬argvÖ¸ÏòmainÖ÷º¯Êıargv²ÎÊı
-//	·µ»Ø£ºÈô²ÎÊıºÏ·¨·µ»Øtrue£¬·ñÔò·µ»Øfalse
-//  ±¸×¢£º¼òµ¥µÄÈë¿Ú²ÎÊıĞ£Ñé
+//	åç§°ï¼šCheckParse
+//	åŠŸèƒ½ï¼šæ ¡éªŒåº”ç”¨ç¨‹åºå…¥å£å‚æ•°
+//  å‚æ•°ï¼šargcç­‰äºmainä¸»å‡½æ•°argcå‚æ•°ï¼ŒargvæŒ‡å‘mainä¸»å‡½æ•°argvå‚æ•°
+//	è¿”å›ï¼šè‹¥å‚æ•°åˆæ³•è¿”å›trueï¼Œå¦åˆ™è¿”å›false
+//  å¤‡æ³¨ï¼šç®€å•çš„å…¥å£å‚æ•°æ ¡éªŒ
 
 /******************************************************************************/
 bool CheckParse( int argc, char** argv )
@@ -77,8 +70,8 @@ bool CheckParse( int argc, char** argv )
 	return true;
 }
 
-//°Ñlen³¤¶ÈµÄucharÀàĞÍÊı¾İ×ª»»³ÉulongÀàĞÍ
-//¾ßÌåÔõÃ´×ª»»ĞèÒª¿´AES apiÀïÃæµÄuint²ÎÊıÊÇÈçºÎÊ¹ÓÃµÄ 
+//æŠŠlené•¿åº¦çš„ucharç±»å‹æ•°æ®è½¬æ¢æˆulongç±»å‹
+//å…·ä½“æ€ä¹ˆè½¬æ¢éœ€è¦çœ‹AES apié‡Œé¢çš„uintå‚æ•°æ˜¯å¦‚ä½•ä½¿ç”¨çš„ 
 void Decode( unsigned long int *output, unsigned char *input, unsigned int len )
 {
 	unsigned int i, j;
@@ -88,7 +81,7 @@ void Decode( unsigned long int *output, unsigned char *input, unsigned int len )
 		(((unsigned long int)input[j+2]) << 16) | (((unsigned long int)input[j+3]) << 24);
 }
 
-//Ã¿´Î°ÑÒ»¸öulongÀàĞÍµÄÊı¾İ×ª»»³ÉËÄ¸öuchar£¬²¢´òÓ¡³öÀ´ 
+//æ¯æ¬¡æŠŠä¸€ä¸ªulongç±»å‹çš„æ•°æ®è½¬æ¢æˆå››ä¸ªucharï¼Œå¹¶æ‰“å°å‡ºæ¥ 
 void Encode(unsigned char * output, unsigned long int * input){
 	unsigned char * temp = (unsigned char *)input;
 	output[0] = temp[0];
@@ -101,7 +94,7 @@ void Encode(unsigned char * output, unsigned long int * input){
 	}
 }
 
-//! ³ÌĞòÖ÷º¯Êı
+//! ç¨‹åºä¸»å‡½æ•°
 int main( int argc, char **argv )
 {
 	//in -> out
@@ -115,7 +108,7 @@ int main( int argc, char **argv )
 	aes_encrypt(keytemp, minwen);	
  	
  	//Aes decode
-	//ÓÉÓÚÉÏÃæÒÑ¾­¼ÓÃÜ£¬ÕâÊ±minwenÀïÃæ´æ·ÅµÄÊÇÃÜÎÄÁË 
+	//ç”±äºä¸Šé¢å·²ç»åŠ å¯†ï¼Œè¿™æ—¶minwené‡Œé¢å­˜æ”¾çš„æ˜¯å¯†æ–‡äº† 
  	aes_decrypt(keytemp, minwen);
  	unsigned char * output = (unsigned char *)malloc(16);
  	Encode(output, (unsigned long *)minwen);
